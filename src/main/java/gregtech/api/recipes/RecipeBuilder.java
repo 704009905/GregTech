@@ -1,5 +1,7 @@
 package gregtech.api.recipes;
 
+import com.cleanroommc.groovyscript.api.IIngredient;
+import com.cleanroommc.groovyscript.helper.recipe.OreDictIngredient;
 import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
@@ -537,6 +539,42 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R inputs(IIngredient ingredient) {
+        return input(ofGroovyIngredient(ingredient));
+    }
+
+    public R inputs(IIngredient... ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    public R inputs(Collection<IIngredient> ingredients) {
+        for (IIngredient ingredient : ingredients) {
+            inputs(ingredient);
+        }
+        return (R) this;
+    }
+
+    public R notConsumable(IIngredient ingredient) {
+        return notConsumable(ofGroovyIngredient(ingredient));
+    }
+
+    private static GTRecipeInput ofGroovyIngredient(IIngredient ingredient) {
+        if (ingredient instanceof OreDictIngredient) {
+            return GTRecipeOreInput.getOrCreate(((OreDictIngredient) ingredient).getOreDict(), ingredient.getAmount());
+        }
+        Object oIngredient = ingredient;
+        if (oIngredient instanceof ItemStack) {
+            return GTRecipeItemInput.getOrCreate((ItemStack) oIngredient);
+        }
+        if (ingredient instanceof FluidStack) {
+            return GTRecipeFluidInput.getOrCreate((FluidStack) ingredient, ingredient.getAmount());
+        }
+        throw new IllegalArgumentException("Could not add groovy ingredient " + ingredient + " to recipe!");
+    }
+
     /**
      * Copies the chanced outputs of a Recipe numberOfOperations times, so every chanced output
      * gets an individual roll, instead of an all or nothing situation
@@ -681,7 +719,7 @@ public class RecipeBuilder<R extends RecipeBuilder<R>> {
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(), new Recipe(inputs, outputs, chancedOutputs,
                 fluidInputs, fluidOutputs, duration, EUt, hidden, isCTRecipe,
-                        recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage));
+                recipePropertyStorage == null ? EmptyRecipePropertyStorage.INSTANCE : recipePropertyStorage));
     }
 
     protected EnumValidationResult validate() {
