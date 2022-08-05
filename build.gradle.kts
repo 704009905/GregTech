@@ -58,6 +58,10 @@ repositories {
         name = "CurseMaven"
         setUrl("https://www.cursemaven.com")
     }
+    maven { //JEI
+        name = "Progwml6 maven"
+        setUrl("http://dvs1.progwml6.com/files/maven/")
+    }
 }
 
 dependencies {
@@ -65,8 +69,9 @@ dependencies {
 
     "deobfCompile"("curse.maven:ae2-extended-life-570458:3649419")
 
+    "deobfCompile"("mezz.jei:jei_1.12.2:4.16.1.302")
+
     "compile"(files("etc/CraftTweaker2-1.12-4.1.20.670.jar"))
-    "compile"(files("etc/jei_1.12.2-4.16.1.301.jar"))
     "compile"(files("etc/theoneprobe-1.12-1.4.28.jar"))
     "compile"(files("etc/CTM-MC1.12.2-1.0.2.31.jar"))
 

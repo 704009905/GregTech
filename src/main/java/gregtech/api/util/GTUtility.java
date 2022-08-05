@@ -69,12 +69,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -1051,5 +1054,32 @@ public class GTUtility {
             return false;
         }
         return world.isDaytime();
+    }
+
+    /**
+     * Takes a file path to a json file and trims the path down to the actual file name
+     * Replaces all _ in the file name with spaces and capitalizes the file name
+     *
+     * @param name The File path
+     * @return A String of the File name at the end of the file path
+     */
+    public static String trimFileName(String name) {
+        FileSystem fs = FileSystems.getDefault();
+        String separator = fs.getSeparator();
+
+        //Remove the leading "folderName\"
+        String[] tempName = name.split(Matcher.quoteReplacement(separator));
+        //Take the last entry in case of nested folders
+        String newName = tempName[tempName.length - 1];
+        //Remove the ".json"
+        tempName = newName.split("\\.");
+        //Take the first entry
+        newName = tempName[0];
+        //Replace all "_" with a space
+        newName = newName.replaceAll("_", " ");
+        //Capitalize the first letter
+        newName = newName.substring(0, 1).toUpperCase() + newName.substring(1);
+
+        return newName;
     }
 }
